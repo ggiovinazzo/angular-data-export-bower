@@ -1,19 +1,18 @@
-(function() {
+(function () {
     'use strict';
 
-    var app = angular.module('angular.data.export.excel',[]);
-    
-    function DataTransformExcel(){
+    var app = angular.module('angular.data.export.excel', []);
 
-        this.mime = 'application/vnd.ms-excel';
+    function DataTransformExcel() {
+
+        this.mime          = 'application/vnd.ms-excel';
         this.fileExtension = '.xls';
-        this.excel = '';
-        this.mapping = null;
+        this.mapping       = null;
 
         //@TODO Move into a more generic service
-        Object.byString = function(o, s) {
-            s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-            s = s.replace(/^\./, '');           // strip a leading dot
+        Object.byString = function (o, s) {
+            s     = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+            s     = s.replace(/^\./, '');           // strip a leading dot
             var a = s.split('.');
             for (var i = 0, n = a.length; i < n; ++i) {
                 var k = a[i];
@@ -24,9 +23,8 @@
                 }
             }
             return o;
-        }
-        
-        
+        };
+
         /**
          * @ngdoc function
          * @name DataTransformExcel.getMimeType
@@ -35,10 +33,10 @@
          * @description Indicates mime type for the transformed data
          * @return {string}
          */
-        this.getMimeType = function(){
+        this.getMimeType = function () {
             return this.mime;
         };
-        
+
         /**
          * @ngdoc function
          * @name DataTransformExcel.getFileExtension
@@ -47,10 +45,10 @@
          * @description Indicates file extension for the transformed data
          * @return {string}
          */
-        this.getFileExtension = function(){
+        this.getFileExtension = function () {
             return this.fileExtension;
         };
-        
+
         /**
          * @ngdoc function
          * @name DataTransformExcel.setMapping
@@ -59,32 +57,41 @@
          * @description Indicates how to render and map columns
          * @return {string}
          */
-        this.setMapping = function(map){
+        this.setMapping = function (map) {
             this.mapping = map;
         };
-        
-        this.processHeader = function(data){
+
+        /**
+         * @ngdoc function
+         * @name DataTransformExcel.processHeader
+         * @module angular.data.transform.excel
+         * @kind function
+         * @description Processes Excel header from json data keys
+         * @param data
+         * @return {string}
+         */
+        this.processHeader = function (data) {
             var keys = [];
-            // Header      
-            if(this.mapping == null){
+            // Header
+            if (this.mapping == null) {
                 if (typeof Object.keys !== 'function') {
                     alert('Cannot transform data, Object.keys function is not available.');
                 }
                 keys = Object.keys(data[0]);
-            }
-            else{
-                for(var i=0; i<this.mapping.length; i++){
+            } else {
+                for (var i = 0; i < this.mapping.length; i++) {
                     keys.push(this.mapping[i].displayName);
                 }
             }
-            
-            this.excel += '<tr>';
-            for(var i=0; i<keys.length; i++) {
-                this.excel += '<td>' + keys[i] + '</td>';
+
+            var header = '<tr>';
+            for (var j = 0; j < keys.length; j++) {
+                header += '<td>' + keys[j] + '</td>';
             }
-            this.excel += '</tr>';
-        }
-        
+            header += '</tr>';
+            return header;
+        };
+
         /**
          * @ngdoc function
          * @name DataTransformExcel.transform
@@ -94,45 +101,45 @@
          * @param {json} data to transform
          * @returns {string}
          */
-        this.transform = function(data){
-             
-            this.processHeader(data);
-            
+        this.transform = function (data) {
+            var excel = '';
+            // Cleanup
+            excel += this.processHeader(data);
+
             //Body
-            if(this.mapping == null){
-                for (var i=0; i<data.length; i++) {
-                    this.excel += '<tr>';
-                    for(var cell in data[i]){
-                        this.excel += '<td>' + data[i][cell] + '</td>';
+            if (this.mapping == null) {
+                for (var i = 0; i < data.length; i++) {
+                    excel += '<tr>';
+                    for (var cell in data[i]) {
+                        excel += '<td>' + data[i][cell] + '</td>';
                     }
-                    this.excel += '</tr>';
+                    excel += '</tr>';
+                }
+            } else {
+                for (var k = 0; k < data.length; k++) {
+                    excel += '<tr>';
+                    for (var j = 0; j < this.mapping.length; j++) {
+                        excel += '<td>' + Object.byString(data[k], this.mapping[j].field) + '</td>';
+                    }
+                    excel += '</tr>';
                 }
             }
-            else{
-                for (var i=0; i<data.length; i++) {
-                    this.excel += '<tr>';
-                    for(var j=0; j<this.mapping.length; j++){
-                        this.excel += '<td>' + Object.byString(data[i], this.mapping[j].field) + '</td>';
-                    }
-                    this.excel += '</tr>';
-                }
-            }
-					
+
             var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Angular Export Excel</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>";
-            excelFile += this.excel;
+            excelFile += excel;
             excelFile += "</table></body></html>";
-            
+
             return excelFile;
         };
-        
+
     }
-    
-    app.factory('dataExportExcelService', 
-        function(){
-            return new DataTransformExcel();
-        }
+
+    app.factory('dataExportExcelService',
+      function () {
+          return new DataTransformExcel();
+      }
     );
-    
+
 })();
 (function() {
     'use strict';

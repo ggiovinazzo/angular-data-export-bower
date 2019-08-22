@@ -1,29 +1,29 @@
 {
-  "name": "angular-data-export",
-  "version": "0.1.0",
-  "author": "GGiovinazzo",
-  "description": "Service for transforming data from json into various formats",
-  "license": "MIT",
+  "name"        : "angular-data-export",
+  "version"     : "1.0.0",
+  "author"      : "GGiovinazzo",
+  "description" : "Service for transforming data from json into various formats",
+  "license"     : "MIT",
   "contributors": [
     {
-      "name": "Gianluca Giovinazzo",
+      "name" : "Gianluca Giovinazzo",
       "email": "ggiovinazzo@gmail.com"
     }
   ],
-  "repository": {
+  "repository"  : {
     "type": "git",
-    "url": "https://github.com/ggiovinazzo/angular-data-export.git"
+    "url" : "https://github.com/ggiovinazzo/angular-data-export.git"
   },
-  "main": [
+  "main"        : [
     "angular-data-export.js"
   ],
-  "ignore": [
+  "ignore"      : [
     "package.json",
     "gulpfile.js"
   ],
   "dependencies": {
-    "angular": "> 1.2.*",
-    "angular-base64": "~2.0.5",
+    "angular"                 : "> 1.2.*",
+    "angular-base64"          : "~2.0.5",
     "angular-download-service": "~0.1.0"
   }
 }
