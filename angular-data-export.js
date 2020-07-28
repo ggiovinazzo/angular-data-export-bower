@@ -119,7 +119,7 @@
                 for (var k = 0; k < data.length; k++) {
                     excel += '<tr>';
                     for (var j = 0; j < this.mapping.length; j++) {
-                        excel += '<td>' + Object.byString(data[k], this.mapping[j].field) + '</td>';
+                        this.mapping[j].field && (excel += '<td>' + Object.byString(data[k], this.mapping[j].field) + '</td>');
                     }
                     excel += '</tr>';
                 }
