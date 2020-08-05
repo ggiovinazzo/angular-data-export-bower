@@ -11,6 +11,9 @@
 
         //@TODO Move into a more generic service
         Object.byString = function (o, s) {
+            if (typeof (o[s] === 'function')) {
+                return o[s]();
+            }
             s     = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
             s     = s.replace(/^\./, '');           // strip a leading dot
             let a = s.split('.');
@@ -22,19 +25,8 @@
                     return;
                 }
             }
-            let returnValue = '';
-            switch (typeof (o)) {
-                case 'function':
-                    returnValue = o();
-                    break;
-                case 'string':
-                case 'number':
-                case 'object':
-                default:
-                    returnValue = o;
 
-            }
-            return returnValue;
+            return o;
         };
 
         /**
