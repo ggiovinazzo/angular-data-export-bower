@@ -11,7 +11,7 @@
 
         //@TODO Move into a more generic service
         Object.byString = function (o, s) {
-            if (typeof (o[s] === 'function')) {
+            if (typeof (o[s]) === 'function') {
                 return o[s]();
             }
             s     = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
